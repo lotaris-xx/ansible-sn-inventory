@@ -238,6 +238,13 @@ class NowInventory(object):
 
             if not selection:
                 selection = ['host_name', 'fqdn', 'ip_address']
+
+            # If fqdn is requested in selection and is empty in servicenow, build one
+            if 'fqdn' in selection:
+                if all( x in record for x in ['fqdn', 'dns_domain']):
+                    if record['fqdn'] == '' and record['dns_domain'].lower() not in [ '', 'none' ]:
+                      record['fqdn'] = (record['name'] + '.' + record['dns_domain']).lower()
+
             for k in selection:
                 if k in record:
                     if record[k] != '':
